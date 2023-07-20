@@ -19,7 +19,7 @@ function search_member(search_period){
 	//alert("beginDate:"+beginDate+",endDate:"+endDate);
 	//return ;
 	
-	var formObj=document.createElement("form");
+	/* var formObj=document.createElement("form"); */
     
 	var formObj=document.createElement("form");
 	var i_beginDate = document.createElement("input"); 

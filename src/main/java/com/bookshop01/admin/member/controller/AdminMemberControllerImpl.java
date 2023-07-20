@@ -52,10 +52,10 @@ public class AdminMemberControllerImpl extends BaseController  implements AdminM
 //		logger.info("section  : " + section);
 //		String pageNum = dateMap.get("pageNum");
 //		logger.info("pageNum  : " + pageNum);
-		
-		
+//		
+//		
 //		String beginDate=null,endDate=null;
-		
+//		
 //		String [] tempDate=calcSearchPeriod(fixedSearchPeriod).split(",");
 //		logger.info("fixedSearchPeriod에서 가져온 임시 날짜 배열  : " + Arrays.toString(tempDate) );
 //		
@@ -79,7 +79,7 @@ public class AdminMemberControllerImpl extends BaseController  implements AdminM
 //		condMap.put("pageNum",pageNum);
 //		condMap.put("beginDate",beginDate);
 //		condMap.put("endDate", endDate);
-		
+//		
 //		ArrayList<MemberVO> member_list=adminMemberService.listMember(condMap);
 //		
 //		mav.addObject("member_list", member_list);

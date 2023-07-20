@@ -68,11 +68,20 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 		String pageNum = dateMap.get("pageNum");
 		String beginDate=null,endDate=null;
 		
+		
+		logger.info("section : " + section  + " pageNum" +pageNum);
+		
+		
 		String [] tempDate=calcSearchPeriod(fixedSearchPeriod).split(",");
 		beginDate=tempDate[0];
 		endDate=tempDate[1];
+		
+		logger.info("beginDate :" + beginDate  + " endDate" +endDate);
+		
 		dateMap.put("beginDate", beginDate);
 		dateMap.put("endDate", endDate);
+		
+		
 		
 		Map<String,Object> condMap=new HashMap<String,Object>();
 		if(section== null) {

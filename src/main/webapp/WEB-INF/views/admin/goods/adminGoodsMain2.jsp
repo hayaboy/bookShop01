@@ -9,21 +9,97 @@
 <head>
 <meta charset="utf-8">
 <script>
+function search_goods_list(fixeSearchPeriod){
+	var formObj=document.createElement("form");
+	var i_fixedSearch_period = document.createElement("input");
+	i_fixedSearch_period.name="fixedSearchPeriod";
+	i_fixedSearch_period.value=searchPeriod;
+    formObj.appendChild(i_fixedSearch_period);
+    document.body.appendChild(formObj); 
+    formObj.method="get";
+    formObj.action="${contextPath}/admin/goods/adminGoodsMain.do";
+    formObj.submit();
+}
 
+
+function  calcPeriod(search_period){
+	var dt = new Date();
+	var beginYear,endYear;
+	var beginMonth,endMonth;
+	var beginDay,endDay;
+	var beginDate,endDate;
+	
+	endYear = dt.getFullYear();
+	endMonth = dt.getMonth()+1;
+	endDay = dt.getDate();
+	if(search_period=='today'){
+		beginYear=endYear;
+		beginMonth=endMonth;
+		beginDay=endDay;
+	}else if(search_period=='one_week'){
+		beginYear=dt.getFullYear();
+		beginMonth=dt.getMonth()+1;
+		dt.setDate(endDay-7);
+		beginDay=dt.getDate();
+		
+	}else if(search_period=='two_week'){
+		beginYear = dt.getFullYear();
+		beginMonth = dt.getMonth()+1;
+		dt.setDate(endDay-14);
+		beginDay=dt.getDate();
+	}else if(search_period=='one_month'){
+		beginYear = dt.getFullYear();
+		dt.setMonth(endMonth-1);
+		beginMonth = dt.getMonth();
+		beginDay = dt.getDate();
+	}else if(search_period=='two_month'){
+		beginYear = dt.getFullYear();
+		dt.setMonth(endMonth-2);
+		beginMonth = dt.getMonth();
+		beginDay = dt.getDate();
+	}else if(search_period=='three_month'){
+		beginYear = dt.getFullYear();
+		dt.setMonth(endMonth-3);
+		beginMonth = dt.getMonth();
+		beginDay = dt.getDate();
+	}else if(search_period=='four_month'){
+		beginYear = dt.getFullYear();
+		dt.setMonth(endMonth-4);
+		beginMonth = dt.getMonth();
+		beginDay = dt.getDate();
+	}
+	
+	if(beginMonth <10){
+		beginMonth='0'+beginMonth;
+		if(beginDay<10){
+			beginDay='0'+beginDay;
+		}
+	}
+	if(endMonth <10){
+		endMonth='0'+endMonth;
+		if(endDay<10){
+			endDay='0'+endDay;
+		}
+	}
+	endDate=endYear+'-'+endMonth +'-'+endDay;
+	beginDate=beginYear+'-'+beginMonth +'-'+beginDay;
+	//alert(beginDate+","+endDate);
+	return beginDate+","+endDate;
+}
 </script>
 </head>
 <body>
-	<h3>상품 조회</h3>
-	<form name="frm_delivery_list" method="post">
+	<H3>상품 조회</H3>
+	<form  method="post">	
 		<TABLE cellpadding="10" cellspacing="10"  >
-	<TBODY>
+			<TBODY>
 				<TR >
 					<TD>
 						<input type="radio" name="r_search"  checked/> 등록일로조회 &nbsp;&nbsp;&nbsp;
-						<!-- <input type="radio" name="r_search" />상세조회 &nbsp;&nbsp;&nbsp; -->
+						<input type="radio" name="r_search" />상세조회 &nbsp;&nbsp;&nbsp;
 					</TD>
 				</TR>
-	<%-- 			<TR >
+				<TR >
 					<TD>
 					  <select name="curYear">
 					    <c:forEach   var="i" begin="0" end="5">
@@ -84,8 +160,8 @@
 					</a>
 					&nbsp;까지 조회
 					</TD>
-				</TR> --%>
-			<!-- 	<tr>
+				</TR>
+				<tr>
 				  <td>
 				    <select name="search_condition" disabled >
 						<option value="전체" checked>전체</option>
@@ -96,7 +172,7 @@
 					<input  type="text"  size="30"  disabled/>  
 					<input   type="button"  value="조회" disabled/>
 				  </td>
-				</tr> -->
+				</tr>
 				<tr>
 				  <td>
 					조회한 기간:<input  type="text"  size="4" value="${beginYear}" />년
@@ -114,8 +190,6 @@
 	</DIV>
 </form>	
 <DIV class="clear"></DIV>
-
-
 <TABLE class="list_view">
 		<TBODY align=center >
 			<tr style="background:#33ff00" >
