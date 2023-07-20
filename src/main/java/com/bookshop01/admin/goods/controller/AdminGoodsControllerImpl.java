@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,12 +29,17 @@ import com.bookshop01.admin.goods.service.AdminGoodsService;
 import com.bookshop01.common.base.BaseController;
 import com.bookshop01.goods.vo.GoodsVO;
 import com.bookshop01.goods.vo.ImageFileVO;
+import com.bookshop01.main.MainController;
 import com.bookshop01.member.vo.MemberVO;
 
 @Controller("adminGoodsController")
 @RequestMapping(value="/admin/goods")
 public class AdminGoodsControllerImpl extends BaseController  implements AdminGoodsController{
+	
+	private static final Logger logger = LoggerFactory.getLogger(AdminGoodsControllerImpl.class);
 	private static final String CURR_IMAGE_REPO_PATH = "C:\\shopping\\file_repo";
+	
+	
 	@Autowired
 	private AdminGoodsService adminGoodsService;
 	
@@ -40,12 +47,23 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 	public ModelAndView adminGoodsMain(@RequestParam Map<String, String> dateMap,
 			                           HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		String viewName=(String)request.getAttribute("viewName");
+		
+		logger.info("/adminGoodsMain.do 요청시 뷰네임 " + viewName);
+		
 		ModelAndView mav = new ModelAndView(viewName);
+		
 		HttpSession session=request.getSession();
 		session=request.getSession();
-		session.setAttribute("side_menu", "admin_mode"); //���������� ���̵� �޴��� �����Ѵ�.
+		
+		logger.info("세션에 side_menu 키 값으로  값은  admin_mode로 설정");
+		session.setAttribute("side_menu", "admin_mode"); //마이페이지 사이드 메뉴로 설정한다.
+		
+		
 		
 		String fixedSearchPeriod = dateMap.get("fixedSearchPeriod");
+		logger.info("매개변수로 넘어온 날짜 관련 정보(dateMap)에서 고정된 검색 기간(fixedSearchPeriod)을 가져옴 " + fixedSearchPeriod);
+		
+		
 		String section = dateMap.get("section");
 		String pageNum = dateMap.get("pageNum");
 		String beginDate=null,endDate=null;
@@ -67,6 +85,8 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 		condMap.put("pageNum",pageNum);
 		condMap.put("beginDate",beginDate);
 		condMap.put("endDate", endDate);
+		
+		
 		List<GoodsVO> newGoodsList=adminGoodsService.listNewGoods(condMap);
 		mav.addObject("newGoodsList", newGoodsList);
 		
@@ -89,28 +109,39 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 	
 	@RequestMapping(value="/addNewGoods.do" ,method={RequestMethod.POST})
 	public ResponseEntity addNewGoods(MultipartHttpServletRequest multipartRequest, HttpServletResponse response)  throws Exception {
+		
+		logger.info("addNewGoods.do 요청 컨트롤러로 들어옴");
+		
 		multipartRequest.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=UTF-8");
 		String imageFileName=null;
 		
 		Map newGoodsMap = new HashMap();
 		Enumeration enu=multipartRequest.getParameterNames();
+		
 		while(enu.hasMoreElements()){
 			String name=(String)enu.nextElement();
 			String value=multipartRequest.getParameter(name);
+			
+			logger.info("새로운 상품에 추가될 newGoodsMap의 이름: " + name + "값:" + value);
 			newGoodsMap.put(name,value);
+			logger.info("newGoodsMap에 추가됨");
 		}
 		
 		HttpSession session = multipartRequest.getSession();
 		MemberVO memberVO = (MemberVO) session.getAttribute("memberInfo");
+		logger.info("멤버 id를 얻기 위해 멤버 객체를 memberInfo 속성에서 가져옴");
 		String reg_id = memberVO.getMember_id();
+		logger.info("상품을 추가한 등록된 멤버" + reg_id);
 		
 		
 		List<ImageFileVO> imageFileList =upload(multipartRequest);
 		if(imageFileList!= null && imageFileList.size()!=0) {
+			logger.info("이미지파일리스트의 이미지 파일 객체에다가 상품 추가한 멤버의 id를 설정함");
 			for(ImageFileVO imageFileVO : imageFileList) {
 				imageFileVO.setReg_id(reg_id);
 			}
+			logger.info("newGoodsMap에 이미지파일리스트 정보 추가함");
 			newGoodsMap.put("imageFileList", imageFileList);
 		}
 		
@@ -119,7 +150,10 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
+			
+			logger.info("관리자가 새로운 상품을 추가함");
 			int goods_id = adminGoodsService.addNewGoods(newGoodsMap);
+			
 			if(imageFileList!=null && imageFileList.size()!=0) {
 				for(ImageFileVO  imageFileVO:imageFileList) {
 					imageFileName = imageFileVO.getFileName();
@@ -129,7 +163,7 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 				}
 			}
 			message= "<script>";
-			message += " alert('����ǰ�� �߰��߽��ϴ�.');";
+			message += " alert('새상품을 추가했습니다.');";
 			message +=" location.href='"+multipartRequest.getContextPath()+"/admin/goods/addNewGoodsForm.do';";
 			message +=("</script>");
 		}catch(Exception e) {
@@ -142,7 +176,7 @@ public class AdminGoodsControllerImpl extends BaseController  implements AdminGo
 			}
 			
 			message= "<script>";
-			message += " alert('������ �߻��߽��ϴ�. �ٽ� �õ��� �ּ���');";
+			message += " alert('오류가 발생했습니다. 다시 시도해 주세요');";
 			message +=" location.href='"+multipartRequest.getContextPath()+"/admin/goods/addNewGoodsForm.do';";
 			message +=("</script>");
 			e.printStackTrace();

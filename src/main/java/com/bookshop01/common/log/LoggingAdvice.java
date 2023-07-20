@@ -81,9 +81,10 @@ public class LoggingAdvice {
 	// target 메소드의 동작 시간을 측정합니다.
 	@Around("execution(* com.bookshop01.*.service.*.*(..)) or " + "execution(* com.bookshop01.*.dao.*.*(..))")
 	public Object timeLog(ProceedingJoinPoint pjp) throws Throwable {
+		logger.info("여기서 부터 는 -------------------@Around 시작------------------------------");
 		logger.info("@Around는 메서드 호출 자체를 가로채 비지니스 메서드 실행 전후에 처리할 로직을 삽입할 수 있음");
 		long startTime = System.currentTimeMillis();
-		logger.info(Arrays.toString(pjp.getArgs()));
+		logger.info("timeLog에서 @Around시에 가져오는 매개변수 목록 배열 :" + Arrays.toString(pjp.getArgs()));
 
 		// 실제 타겟을 실행하는 부분이다. 이 부분이 없으면 advice가 적용된 메소드가 동작하지않습니다.
 		Object result = pjp.proceed(); // proceed는 Exception 보다 상위 Throwable을 처리해야 합니다.
@@ -91,7 +92,7 @@ public class LoggingAdvice {
 		long endTime = System.currentTimeMillis();
 		// target 메소드의 동작 시간을 출력한다.
 		logger.info("메소드 동작 시간 측정하여 sql 동작 시간이 오래 걸릴 경우 sql문 점검 및 인덱스 사용할지 여부  검토" +pjp.getSignature().getName() + " : " + (endTime - startTime) + "밀리세컨드"); 
-		logger.info("==============================");
+		logger.info("여기까지 -------------------@Around 끝------------------------------");
 
 		// Around를 사용할 경우 반드시 Object를 리턴해야 합니다.
 		return result;

@@ -21,7 +21,7 @@ import com.bookshop01.goods.service.GoodsService;
 import com.bookshop01.goods.vo.GoodsVO;
 
 @Controller("mainController")
-@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy //Spring의 <aop:aspectj-autoproxy> XML 요소에 있는 기능과 유사한 AspectJ의 @Aspect 주석으로 표시된 구성 요소 처리 지원을 활성화합니다. 다음과 같이 @Configuration 클래스에서 사용됩니다. 주석처리시 AOP적용 안됨
 public class MainController extends BaseController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -39,7 +39,7 @@ public class MainController extends BaseController {
 		mav.setViewName(viewName);
 		
 		session=request.getSession();
-		logger.info("세션에 side_menu라는 키값으로 user라는 문자열 값 설정");
+		logger.info("세션에 side_menu라는 키값으로 admin_mode, my_page, user라는 문자열 값 설정, 각 값에 따라 side.jsp에서 메뉴를 다르게 설정함");
 		
 		session.setAttribute("side_menu", "user");		
 		logger.info("서비스 객체가 제품 목록을 가져옴");
