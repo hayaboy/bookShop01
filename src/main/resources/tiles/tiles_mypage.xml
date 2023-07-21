@@ -19,6 +19,12 @@
        <put-attribute name="title" value="내 정보 상세 페이지" />
        <put-attribute name="body" value="/WEB-INF/views/mypage/myDetailInfo.jsp" />
      </definition>
+     
+     
+      <definition name="/mypage/deleteMember" extends="baseLayout">
+       <put-attribute name="title" value=" 회원 삭제 페이지" />
+       <put-attribute name="body" value="/WEB-INF/views/main/main.jsp" />
+     </definition>
 </tiles-definitions>
 
 

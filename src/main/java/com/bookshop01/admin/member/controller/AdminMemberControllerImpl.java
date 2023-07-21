@@ -80,9 +80,14 @@ public class AdminMemberControllerImpl extends BaseController  implements AdminM
 //		condMap.put("beginDate",beginDate);
 //		condMap.put("endDate", endDate);
 //		
+		
+		//기간 정보 없이 모든 회원 정보 조회
+		ArrayList<MemberVO> all_member_list=adminMemberService.listMember();
 //		ArrayList<MemberVO> member_list=adminMemberService.listMember(condMap);
 //		
-//		mav.addObject("member_list", member_list);
+		// 기간 정보 없는 모든 회원 all_member_list, 기간 정보 있는 모든 회원 member_list
+		mav.addObject("all_member_list", all_member_list);
+		//mav.addObject("member_list", member_list);
 //		
 //		String beginDate1[]=beginDate.split("-");
 //		String endDate2[]=endDate.split("-");
@@ -100,9 +105,11 @@ public class AdminMemberControllerImpl extends BaseController  implements AdminM
 	}
 	@RequestMapping(value="/memberDetail.do" ,method={RequestMethod.POST,RequestMethod.GET})
 	public ModelAndView memberDetail(HttpServletRequest request, HttpServletResponse response)  throws Exception{
+		logger.info("adminMemberController의 memberDetail.do 메서드로 들어옴");
 		String viewName=(String)request.getAttribute("viewName");
 		ModelAndView mav = new ModelAndView(viewName);
 		String member_id=request.getParameter("member_id");
+		logger.info("member_id : " + member_id);
 		MemberVO member_info=adminMemberService.memberDetail(member_id);
 		mav.addObject("member_info",member_info);
 		return mav;
@@ -114,8 +121,12 @@ public class AdminMemberControllerImpl extends BaseController  implements AdminM
 		String val[]=null;
 		PrintWriter pw=response.getWriter();
 		String member_id=request.getParameter("member_id");
+		logger.info("수정할 id : " + member_id );
 		String mod_type=request.getParameter("mod_type");
+		logger.info("수정할 mod_type : " + mod_type );
 		String value =request.getParameter("value");
+		logger.info("수정할 value : " + value );
+		
 		if(mod_type.equals("member_birth")){
 			val=value.split(",");
 			memberMap.put("member_birth_y",val[0]);
@@ -149,6 +160,7 @@ public class AdminMemberControllerImpl extends BaseController  implements AdminM
 		
 		memberMap.put("member_id", member_id);
 		
+		//수정할 정보가 담긴 memberMap객체를 매개변수에 넣어주고 수정
 		adminMemberService.modifyMemberInfo(memberMap);
 		pw.print("mod_success");
 		pw.close();		

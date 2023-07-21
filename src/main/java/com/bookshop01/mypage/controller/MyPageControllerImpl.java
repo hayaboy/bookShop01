@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.bookshop01.admin.member.service.AdminMemberServiceImpl;
 import com.bookshop01.common.base.BaseController;
 import com.bookshop01.member.vo.MemberVO;
 import com.bookshop01.mypage.service.MyPageService;
@@ -27,6 +30,9 @@ import com.bookshop01.order.vo.OrderVO;
 @Controller("myPageController")
 @RequestMapping(value="/mypage")
 public class MyPageControllerImpl extends BaseController  implements MyPageController{
+	
+	private static final Logger logger = LoggerFactory.getLogger(MyPageControllerImpl.class);
+	
 	@Autowired
 	private MyPageService myPageService;
 	
@@ -39,7 +45,7 @@ public class MyPageControllerImpl extends BaseController  implements MyPageContr
 			   HttpServletRequest request, HttpServletResponse response)  throws Exception {
 		HttpSession session=request.getSession();
 		session=request.getSession();
-		session.setAttribute("side_menu", "my_page"); //¸¶ÀÌÆäÀÌÁö »çÀÌµå ¸Ş´º·Î ¼³Á¤ÇÑ´Ù.
+		session.setAttribute("side_menu", "my_page"); //ë§ˆì´í˜ì´ì§€ ì‚¬ì´ë“œ ë©”ë‰´ë¡œ ì„¤ì •í•œë‹¤.
 		
 		String viewName=(String)request.getAttribute("viewName");
 		ModelAndView mav = new ModelAndView(viewName);
@@ -89,7 +95,7 @@ public class MyPageControllerImpl extends BaseController  implements MyPageContr
 		dateMap.put("member_id", member_id);
 		List<OrderVO> myOrderHistList=myPageService.listMyOrderHistory(dateMap);
 		
-		String beginDate1[]=beginDate.split("-"); //°Ë»öÀÏÀÚ¸¦ ³â,¿ù,ÀÏ·Î ºĞ¸®ÇØ¼­ È­¸é¿¡ Àü´ŞÇÕ´Ï´Ù.
+		String beginDate1[]=beginDate.split("-"); //ê²€ìƒ‰ì¼ìë¥¼ ë…„,ì›”,ì¼ë¡œ ë¶„ë¦¬í•´ì„œ í™”ë©´ì— ì „ë‹¬í•©ë‹ˆë‹¤.
 		String endDate1[]=endDate.split("-");
 		mav.addObject("beginYear",beginDate1[0]);
 		mav.addObject("beginMonth",beginDate1[1]);
@@ -120,6 +126,8 @@ public class MyPageControllerImpl extends BaseController  implements MyPageContr
 		return mav;
 	}	
 	
+	
+	//íšŒì›ì •ë³´ ìˆ˜ì •
 	@Override
 	@RequestMapping(value="/modifyMyInfo.do" ,method = RequestMethod.POST)
 	public ResponseEntity modifyMyInfo(@RequestParam("attribute")  String attribute,
@@ -164,7 +172,7 @@ public class MyPageControllerImpl extends BaseController  implements MyPageContr
 		
 		memberMap.put("member_id", member_id);
 		
-		//¼öÁ¤µÈ È¸¿ø Á¤º¸¸¦ ´Ù½Ã ¼¼¼Ç¿¡ ÀúÀåÇÑ´Ù.
+		//ìˆ˜ì •ëœ íšŒì› ì •ë³´ë¥¼ ë‹¤ì‹œ ì„¸ì…˜ì— ì €ì¥í•œë‹¤.
 		memberVO=(MemberVO)myPageService.modifyMyInfo(memberMap);
 		session.removeAttribute("memberInfo");
 		session.setAttribute("memberInfo", memberVO);
@@ -176,5 +184,56 @@ public class MyPageControllerImpl extends BaseController  implements MyPageContr
 		resEntity =new ResponseEntity(message, responseHeaders, HttpStatus.OK);
 		return resEntity;
 	}	
+	
+	
+	
+	
+	   //íšŒì› íƒˆí‡´
+		@Override
+		@RequestMapping(value="/deleteMember.do" ,method = RequestMethod.GET)
+		public ResponseEntity deleteMember(@RequestParam("member_id")  String member_id,				                
+				               HttpServletRequest request, HttpServletResponse response)  throws Exception {
+			
+			
+			logger.info("myPageControllerì˜ íšŒì› íƒˆí‡´ ë©”ì„œë“œë¡œ ì§„ì…");
+			
+			response.setContentType("text/html; charset=UTF-8");
+			request.setCharacterEncoding("utf-8");
+			
+			
+			String message = null;
+			ResponseEntity resEntity = null;
+			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+			
+			HttpSession session=request.getSession();
+			memberVO=(MemberVO)session.getAttribute("memberInfo");
+			member_id=memberVO.getMember_id();
+			
+			logger.info("íšŒì› íƒˆí‡´í•  id" + member_id);
+			
+			try {
+			
+				myPageService.deleteMember(member_id);
+				session.invalidate();
+				
+				 message  = "<script>";
+				    message +=" alert('íšŒì› íƒˆí‡´ë¥¼ ë§ˆì³¤ìŠµë‹ˆë‹¤.ë¡œê·¸ì¸ì°½ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤..');";
+				    message += " location.href='"+request.getContextPath()+"/member/loginForm.do';";
+				    message += " </script>";
+				    
+				}catch(Exception e) {
+					message  = "<script>";
+				    message +=" alert('ì‘ì—… ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ ì£¼ì„¸ìš”');";
+				    message += " location.href='"+request.getContextPath()+"/member/memberForm.do';";
+				    message += " </script>";
+					e.printStackTrace();
+				}
+				resEntity =new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+				return resEntity;
+			}
+			
+	
+	
 	
 }

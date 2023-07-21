@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.bookshop01.admin.member.controller.AdminMemberControllerImpl;
 import com.bookshop01.common.base.BaseController;
 import com.bookshop01.member.service.MemberService;
 import com.bookshop01.member.vo.MemberVO;
@@ -25,6 +28,9 @@ import com.bookshop01.member.vo.MemberVO;
 @Controller("memberController")
 @RequestMapping(value="/member")
 public class MemberControllerImpl extends BaseController implements MemberController{
+	private static final Logger logger = LoggerFactory.getLogger(MemberControllerImpl.class);
+	
+	
 	@Autowired
 	private MemberService memberService;
 	@Autowired
@@ -34,9 +40,14 @@ public class MemberControllerImpl extends BaseController implements MemberContro
 	@RequestMapping(value="/login.do" ,method = RequestMethod.POST)
 	public ModelAndView login(@RequestParam Map<String, String> loginMap,
 			                  HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		logger.info("login 메서드에 들어옴");
+		// 데이터(로그인 정보(회워정보)를 가지고 나가야 함
 		ModelAndView mav = new ModelAndView();
 		 memberVO=memberService.login(loginMap);
 		if(memberVO!= null && memberVO.getMember_id()!=null){
+			
+			//세션에 뭐(로그온 여부 회원 정보)를 저장
 			HttpSession session=request.getSession();
 			session=request.getSession();
 			session.setAttribute("isLogOn", true);

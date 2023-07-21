@@ -18,6 +18,15 @@ public class AdminMemberDAOImpl  implements AdminMemberDAO{
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdminMemberDAOImpl.class);
 	
+	
+	@Override
+	public ArrayList<MemberVO> listMember() throws DataAccessException {
+		logger.info("전체 회원 조회");
+		ArrayList<MemberVO>  memberList=(ArrayList)sqlSession.selectList("mapper.admin.member.listMembers");
+		return memberList;
+	}
+	
+	
 	@Autowired
 	private SqlSession sqlSession;
 	
@@ -37,6 +46,8 @@ public class AdminMemberDAOImpl  implements AdminMemberDAO{
 	public void modifyMemberInfo(HashMap memberMap) throws DataAccessException{
 		sqlSession.update("mapper.admin.member.modifyMemberInfo",memberMap);
 	}
+
+	
 	
 	
 

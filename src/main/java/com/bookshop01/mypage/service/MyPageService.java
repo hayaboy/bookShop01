@@ -14,5 +14,7 @@ public interface MyPageService{
 	public MemberVO  modifyMyInfo(Map memberMap) throws Exception;
 	public void cancelOrder(String order_id) throws Exception;
 	public MemberVO myDetailInfo(String member_id) throws Exception;
+	
+	public void deleteMember(String member_id) throws Exception;
 
 }

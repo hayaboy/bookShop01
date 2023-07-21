@@ -35,6 +35,17 @@
 		<result property="del_yn" column="del_yn" />
 	</resultMap>
 	
+	
+	<select id="listMembers" resultMap="memberResult"   >
+
+ 	<![CDATA[
+		 select * from t_shopping_member order by joindate desc	
+			]]>		        
+	</select>	
+	
+	
+	
+	
 <select id="listMember" resultMap="memberResult"   parameterType="java.util.HashMap"  >
 
 	
@@ -69,7 +80,7 @@
 	
     <select id="memberDetail" resultMap="memberResult"   parameterType="String"  >
 	    <![CDATA[
-		    select * from t_shoping_member
+		    select * from t_shopping_member
             where member_id=#{member_id}
     	]]>
 	</select>	

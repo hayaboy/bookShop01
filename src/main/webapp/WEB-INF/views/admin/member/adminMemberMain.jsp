@@ -11,6 +11,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script>
 
+
+function all_search_member(){
+	
+	alert("전체조회");
+	
+	
+	var formObj=document.createElement("form");
+	formObj.method="get";
+    formObj.action="/bookshop01/admin/member/adminMemberMain.do";
+    formObj.submit();
+	
+}
+
+
 function search_member(search_period){
 	
 	temp=calcPeriod(search_period);
@@ -217,20 +231,27 @@ function fn_detail_search(){
 <body>
 	<!-- 여기는 adminMemberMain.jsp -->
 	<H3>회원 조회</H3>
+	
 	<form name="frm_delivery_list">
 		<table cellpadding="10" cellspacing="10">
 			<tbody>
 				<tr>
 					<td>
 					<input type="radio" name="r_search_option"
+						value="all_search" checked
+						onClick="all_search_member()" /> 전체회원조회 &nbsp;&nbsp;&nbsp;
+										
+						
+			<!-- 	</tr>
+					<input type="radio" name="r_search_option"
 						value="simple_search" checked
 						onClick="fn_enable_detail_search(this)" /> 간단조회 &nbsp;&nbsp;&nbsp;
 						
-					<!-- <input type="radio" name="r_search_option" value="detail_search"
+					<input type="radio" name="r_search_option" value="detail_search"
 						onClick="fn_enable_detail_search(this)" /> 상세조회
-						&nbsp;&nbsp;&nbsp;</td> -->
+						&nbsp;&nbsp;&nbsp;</td>
 						
-				</tr>
+				</tr> -->
 			<%-- 	<tr>
 					<td><select name="curYear">
 							<c:forEach var="i" begin="0" end="5">
@@ -404,10 +425,72 @@ function fn_detail_search(){
 		<div class="clear"></div>
 
 
+<%--  ${ all_member_list}  --%>
 
+<table class="list_view">
+		<tbody align=center >
+			<tr align=center bgcolor="#ffcc00">
+				<td class="fixed" >회원아이디</td>
+				<td class="fixed">회원이름</td>
+				<td>휴대폰번호</td>
+				<td>주소</td>
+				<td>가입일</td>
+				<td>탈퇴여부</td>
+			</tr>
 
+ <c:choose>
 
+     <c:when test="${empty all_member_list }">			
+			
+				 <tr>
+		       <td colspan=5 class="fixed">
+				  <strong>조회된 회원이 없습니다.</strong>
+			   </td>
+		     </tr>	  
+		     
+	 </c:when>
 
+	 <c:otherwise>
+		 <c:forEach var="item" items="${all_member_list}" varStatus="item_num">
+	            <tr >       
+					<td width=10%>
+					
+					  <a href="${pageContext.request.contextPath}/admin/member/memberDetail.do?member_id=${item.member_id}">
+					     <strong>${item.member_id}</strong>
+					  </a>
+					</td>
+					<td width=10%>
+					  <strong>${item.member_name}</strong><br>
+					</td>
+					<td width=10% >
+					  <strong>${item.hp1}-${item.hp2}-${item.hp3}</strong><br>
+					</td>
+					<td width=50%>
+					  <strong>${item.roadAddress}</strong><br>
+					  <strong>${item.jibunAddress}</strong><br>
+					  <strong>${item.namujiAddress}</strong><br>
+					</td>
+					<td width=10%>
+					   <c:set var="join_date" value="${item.joinDate}" />
+					   <c:set var="arr" value="${fn:split(join_date,' ')}" />
+					   <strong><c:out value="${arr[0]}" /></strong>
+				    </td>
+				    <td width=10%>
+				       <c:choose>
+				         <c:when test="${item.del_yn=='N' }">
+				           <strong>활동중</strong>  
+				         </c:when>
+				         <c:otherwise>
+				           <strong>탈퇴</strong>
+				         </c:otherwise>
+				       </c:choose>
+				    </td>
+				</tr>
+		</c:forEach>
+	 </c:otherwise>
+</c:choose>
+</tbody>
+</table>
 
 
 
