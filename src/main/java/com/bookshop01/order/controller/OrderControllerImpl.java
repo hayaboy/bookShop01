@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.bookshop01.admin.member.controller.AdminMemberControllerImpl;
 import com.bookshop01.common.base.BaseController;
 import com.bookshop01.goods.vo.GoodsVO;
 import com.bookshop01.member.vo.MemberVO;
@@ -26,6 +29,9 @@ import com.bookshop01.order.vo.OrderVO;
 @Controller("orderController")
 @RequestMapping(value="/order")
 public class OrderControllerImpl extends BaseController implements OrderController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(OrderControllerImpl.class);
+	
 	@Autowired
 	private OrderService orderService;
 	@Autowired
@@ -40,10 +46,15 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 		session=request.getSession();
 		
 		Boolean isLogOn=(Boolean)session.getAttribute("isLogOn");
+		logger.info("ê°ê°ì˜ ì œí’ˆ ì£¼ë¬¸ì‹œ ë¡œê·¸ì¸ ì—¬ë¶€  : " + isLogOn);
+		
 		String action=(String)session.getAttribute("action");
-		//·Î±×ÀÎ ¿©ºÎ Ã¼Å©
-		//ÀÌÀü¿¡ ·Î±×ÀÎ »óÅÂÀÎ °æ¿ì´Â ÁÖ¹®°úÁ¤ ÁøÇà
-		//·Î±×¾Æ¿ô »óÅÂÀÎ °æ¿ì ·Î±×ÀÎ È­¸éÀ¸·Î ÀÌµ¿
+		logger.info("ê°ê°ì˜ ì œí’ˆ ì£¼ë¬¸ì‹œ action ê°’  : " + action);
+		
+		//ë¡œê·¸ì¸ ì—¬ë¶€ ì²´í¬
+		//ì´ì „ì— ë¡œê·¸ì¸ ìƒíƒœì¸ ê²½ìš°ëŠ” ì£¼ë¬¸ê³¼ì • ì§„í–‰
+		//ë¡œê·¸ì•„ì›ƒ ìƒíƒœì¸ ê²½ìš° ë¡œê·¸ì¸ í™”ë©´ìœ¼ë¡œ ì´ë™
+		
 		if(isLogOn==null || isLogOn==false){
 			session.setAttribute("orderInfo", _orderVO);
 			session.setAttribute("action", "/order/orderEachGoods.do");
@@ -142,11 +153,11 @@ public class OrderControllerImpl extends BaseController implements OrderControll
 			orderVO.setCard_pay_month(receiverMap.get("card_pay_month"));
 			orderVO.setPay_orderer_hp_num(receiverMap.get("pay_orderer_hp_num"));	
 			orderVO.setOrderer_hp(orderer_hp);	
-			myOrderList.set(i, orderVO); //°¢ orderVO¿¡ ÁÖ¹®ÀÚ Á¤º¸¸¦ ¼¼ÆÃÇÑ ÈÄ ´Ù½Ã myOrderList¿¡ ÀúÀåÇÑ´Ù.
+			myOrderList.set(i, orderVO); //ï¿½ï¿½ orderVOï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ myOrderListï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		}//end for
 		
 	    orderService.addNewOrder(myOrderList);
-		mav.addObject("myOrderInfo",receiverMap);//OrderVO·Î ÁÖ¹®°á°ú ÆäÀÌÁö¿¡  ÁÖ¹®ÀÚ Á¤º¸¸¦ Ç¥½ÃÇÑ´Ù.
+		mav.addObject("myOrderInfo",receiverMap);//OrderVOï¿½ï¿½ ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½Ö¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½Ñ´ï¿½.
 		mav.addObject("myOrderList", myOrderList);
 		return mav;
 	}

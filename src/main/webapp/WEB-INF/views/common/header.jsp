@@ -31,6 +31,61 @@
 		}); //end ajax	
 	}
 	
+	
+	/* 
+	
+	value=document.frmSearch.searchWord.value;
+	value는 '모두의'
+	
+	data = {keyword:'모두의'}
+	
+	jsonInfo=data
+	
+	var html = '';
+	
+	for(var i in jsonInfo.keyword){
+		   html += "<a href=\"javascript:select('"+jsonInfo.keyword[i]+"')\">"+jsonInfo.keyword[i]+"</a><br/>";
+	    }
+	
+	
+	
+	 '모두의' 입력시     모두의 딥러닝  모두의 파이썬    도서 검색
+
+	
+	`<a href="javascript:select('모')">모</a><br/>
+	<a href="javascript:select('두')">두</a><br/>
+	<a href="javascript:select('의')">의</a><br/>`
+	
+	
+	
+	var listView = document.getElementById("suggestList");
+	
+	listView 
+	
+	<div id="suggestList">
+	
+	<a href="javascript:select('모두의 딥러닝')">모두의 딥러닝</a><br>
+	<a href="javascript:select('모두의 파이썬')">모두의 파이썬</a><br>
+	
+	</div>
+	
+	element
+	
+	<div id="suggest" style="display: block;">
+    <div id="suggestList">
+    	<a href="javascript:select('모')">모</a><br>
+    	<a href="javascript:select('두')">두</a><br>
+    	<a href="javascript:select('의')">의</a><br></div>
+	</div>
+	
+	*/
+	
+	
+	
+	
+	
+	
+	
 	function displayResult(jsonInfo){
 		var count = jsonInfo.keyword.length;
 		if(count > 0) {

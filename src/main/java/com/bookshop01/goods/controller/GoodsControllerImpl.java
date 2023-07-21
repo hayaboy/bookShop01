@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.bookshop01.admin.goods.controller.AdminGoodsControllerImpl;
 import com.bookshop01.common.base.BaseController;
 import com.bookshop01.goods.service.GoodsService;
 import com.bookshop01.goods.vo.GoodsVO;
@@ -25,6 +28,9 @@ import net.sf.json.JSONObject;
 @Controller("goodsController")
 @RequestMapping(value="/goods")
 public class GoodsControllerImpl extends BaseController   implements GoodsController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(GoodsControllerImpl.class);
+	
 	@Autowired
 	private GoodsService goodsService;
 	
@@ -46,14 +52,14 @@ public class GoodsControllerImpl extends BaseController   implements GoodsContro
 			                                  HttpServletRequest request, HttpServletResponse response) throws Exception{
 		response.setContentType("text/html;charset=utf-8");
 		response.setCharacterEncoding("utf-8");
-		//System.out.println(keyword);
+		logger.info("ê²€ìƒ‰í•˜ê³ ì í•˜ëŠ” í‚¤ì›Œë“œ : " + keyword);
 		if(keyword == null || keyword.equals(""))
 		   return null ;
 	
 		keyword = keyword.toUpperCase();
 	    List<String> keywordList =goodsService.keywordSearch(keyword);
 	    
-	 // ÃÖÁ¾ ¿Ï¼ºµÉ JSONObject ¼±¾ğ(ÀüÃ¼)
+	 // ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¼ï¿½ï¿½ï¿½ JSONObject ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Ã¼)
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("keyword", keywordList);
 		 		
@@ -65,21 +71,31 @@ public class GoodsControllerImpl extends BaseController   implements GoodsContro
 	@RequestMapping(value="/searchGoods.do" ,method = RequestMethod.GET)
 	public ModelAndView searchGoods(@RequestParam("searchWord") String searchWord,
 			                       HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		
 		String viewName=(String)request.getAttribute("viewName");
+		
+		logger.info("ê²€ìƒ‰í•˜ê³ ì í•˜ëŠ” ê²€ìƒ‰ì–´ : " + searchWord);
+		
 		List<GoodsVO> goodsList=goodsService.searchGoods(searchWord);
+		
+		
+		
 		ModelAndView mav = new ModelAndView(viewName);
+		
 		mav.addObject("goodsList", goodsList);
+		
 		return mav;
 		
 	}
 	
 	private void addGoodsInQuick(String goods_id,GoodsVO goodsVO,HttpSession session){
 		boolean already_existed=false;
-		List<GoodsVO> quickGoodsList; //ÃÖ±Ù º» »óÇ° ÀúÀå ArrayList
+		List<GoodsVO> quickGoodsList; //ï¿½Ö±ï¿½ ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ArrayList
 		quickGoodsList=(ArrayList<GoodsVO>)session.getAttribute("quickGoodsList");
 		
 		if(quickGoodsList!=null){
-			if(quickGoodsList.size() < 4){ //¹Ì¸®º» »óÇ° ¸®½ºÆ®¿¡ »óÇ°°³¼ö°¡ ¼¼°³ ÀÌÇÏÀÎ °æ¿ì
+			if(quickGoodsList.size() < 4){ //ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 				for(int i=0; i<quickGoodsList.size();i++){
 					GoodsVO _goodsBean=(GoodsVO)quickGoodsList.get(i);
 					if(goods_id.equals(_goodsBean.getGoods_id())){
